@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+Properties props = new Properties()
+File propsFile = file('../gradle.properties')
+if (propsFile.exists()) {
+    props.load(propsFile.newDataInputStream())
+} else {
+    throw new GradleException("Missing gradle.properties, check the gradle.properties")
+}
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
+    defaultConfig {
+        applicationId "com.emadabel.popularmovies"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            buildConfigField "String", "TMDB_API_KEY", "\"${props.getProperty("tmdbApiKey")}\""
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:preference-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+}
