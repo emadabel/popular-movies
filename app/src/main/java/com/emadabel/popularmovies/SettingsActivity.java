@@ -1,7 +1,7 @@
 package com.emadabel.popularmovies;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -12,7 +12,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.pref_toolbar);
+        Toolbar toolbar = findViewById(R.id.pref_toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {

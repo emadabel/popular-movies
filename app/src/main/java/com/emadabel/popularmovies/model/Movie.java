@@ -8,12 +8,30 @@ public class Movie {
 
     private String voteCount;
     private int id;
-    private float voteAverage;
+    private String voteAverage;
     private String title;
     private String posterPath;
     private String originalTitle;
     private String overview;
     private String releaseDate;
+
+    public Movie(String voteCount, int id, String voteAverage, String title, String posterPath,
+                 String originalTitle, String overview, String releaseDate) {
+        this.voteCount = voteCount;
+        this.id = id;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
+
+    /**
+     * No args constructor for use in serialization
+     */
+    public Movie() {
+    }
 
     public String getVoteCount() {
         return voteCount;
@@ -31,11 +49,11 @@ public class Movie {
         this.id = id;
     }
 
-    public float getVoteAverage() {
+    public String getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(float voteAverage) {
+    public void setVoteAverage(String voteAverage) {
         this.voteAverage = voteAverage;
     }
 

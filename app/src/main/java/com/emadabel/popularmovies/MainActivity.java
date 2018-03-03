@@ -15,22 +15,20 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.utils.NetworkUtils;
+import com.emadabel.popularmovies.utils.TmdbJsonUtils;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        LoaderCallbacks<Movie[]>,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        LoaderCallbacks<List<Movie>>,
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        MoviesAdapter.MovieAdapterOnClickHandler {
 
     private static final int TMDB_LOADER_ID = 110;
 
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageTv;
     private ProgressBar mLoadingIndicatorPb;
-    private Spinner mSpinner;
     private MoviesAdapter moviesAdapter;
 
     @Override
@@ -47,14 +44,14 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.movies_list_rv);
-        mErrorMessageTv = (TextView) findViewById(R.id.error_message_tv);
-        mLoadingIndicatorPb = (ProgressBar) findViewById(R.id.loading_indicator_pb);
+        mRecyclerView = findViewById(R.id.movies_list_rv);
+        mErrorMessageTv = findViewById(R.id.error_message_tv);
+        mLoadingIndicatorPb = findViewById(R.id.loading_indicator_pb);
 
-        moviesAdapter = new MoviesAdapter();
+        moviesAdapter = new MoviesAdapter(this, this);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
 
@@ -68,61 +65,11 @@ public class MainActivity extends AppCompatActivity implements
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
-    /**
-     * @param menu
-     * @return reference: https://stackoverflow.com/questions/37250397/how-to-add-a-spinner-next-to-a-menu-in-the-toolbar
-     * reference: https://developer.android.com/guide/topics/ui/controls/spinner.html
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        MenuItem item = menu.findItem(R.id.spinner);
-        mSpinner = (Spinner) item.getActionView();
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.spinner_list_item_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mSpinner.setAdapter(adapter);
-
-        updateSpinner();
-
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String value = "";
-                if (pos == 1) {
-                    value = getString(R.string.pref_sort_top_rated);
-                } else {
-                    value = getString(R.string.pref_sort_popular);
-                }
-                SharedPreferences prefs = PreferenceManager
-                        .getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(getString(R.string.pref_sort_key), value);
-                editor.apply();
-                getSupportLoaderManager().restartLoader(TMDB_LOADER_ID, null, MainActivity.this);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         return true;
-    }
-
-    private void updateSpinner() {
-        if (mSpinner != null) {
-            String sortType = getSortType();
-            if (sortType.equals(getString(R.string.pref_sort_top_rated))) {
-                mSpinner.setSelection(1);
-            } else {
-                mSpinner.setSelection(0);
-            }
-        }
     }
 
     @Override
@@ -139,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Movie[]> onCreateLoader(int id, final Bundle loaderArgs) {
-        return new AsyncTaskLoader<Movie[]>(this) {
+    public Loader<List<Movie>> onCreateLoader(int id, final Bundle loaderArgs) {
+        return new AsyncTaskLoader<List<Movie>>(this) {
 
-            Movie[] mMovies = null;
+            List<Movie> mMovies = null;
 
             @Override
             protected void onStartLoading() {
@@ -150,12 +97,13 @@ public class MainActivity extends AppCompatActivity implements
                     deliverResult(mMovies);
                 } else {
                     mLoadingIndicatorPb.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
                     forceLoad();
                 }
             }
 
             @Override
-            public Movie[] loadInBackground() {
+            public List<Movie> loadInBackground() {
 
                 URL tmdbRequestUrl = NetworkUtils.buildUrl(getSortType());
 
@@ -166,15 +114,17 @@ public class MainActivity extends AppCompatActivity implements
                     if (TextUtils.isEmpty(jsonResponse)) {
                         return null;
                     }
-                    return new Movie[0];
-                } catch (IOException e) {
+
+                    return TmdbJsonUtils
+                            .getMoviesListFromJson(jsonResponse);
+                } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             }
 
             @Override
-            public void deliverResult(Movie[] data) {
+            public void deliverResult(List<Movie> data) {
                 mMovies = data;
                 super.deliverResult(data);
             }
@@ -182,8 +132,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
         mLoadingIndicatorPb.setVisibility(View.INVISIBLE);
+        moviesAdapter.setMoviesData(data);
         if (data == null) {
             showErrorMessage();
         } else {
@@ -192,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(Loader<Movie[]> loader) {
+    public void onLoaderReset(Loader<List<Movie>> loader) {
 
     }
 
@@ -209,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
 
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
-            updateSpinner();
             getSupportLoaderManager().restartLoader(TMDB_LOADER_ID, null, this);
             PREFERENCES_HAVE_BEEN_UPDATED = false;
         }
@@ -236,5 +186,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         PREFERENCES_HAVE_BEEN_UPDATED = true;
+    }
+
+    @Override
+    public void onClick(int movieId) {
+        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+        intent.putExtra(DetailsActivity.EXTRA_MOVIE_ID, movieId);
+        startActivity(intent);
     }
 }

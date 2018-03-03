@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.emadabel.popularmovies.BuildConfig;
-import com.emadabel.popularmovies.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,14 +34,13 @@ public class NetworkUtils {
     private static final String API_KEY_PARAM = "api_key";
 
     /**
-     *
      * @param context the activity that checking for connectivity
      * @return the value true if there is internet and false if no any internet connection
      * reference: https://developer.android.com/training/monitoring-device-state/connectivity-monitoring.html
      */
-    public static boolean isConnectionAvailable (Context context) {
+    private static boolean isConnectionAvailable(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (cm != null) {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -53,7 +51,6 @@ public class NetworkUtils {
     }
 
     /**
-     *
      * @param request Is one of three options(movieId, popularList, topRated) that will be queried for.
      * @return The URL to use to query the movies database.
      */
@@ -75,6 +72,12 @@ public class NetworkUtils {
         }
 
         return url;
+    }
+
+    public static String buildPosterUrl(String posterPath) {
+        return (API_BASE_IMAGE_URL)
+                .concat(POSTER_SIZE)
+                .concat(posterPath);
     }
 
     /**

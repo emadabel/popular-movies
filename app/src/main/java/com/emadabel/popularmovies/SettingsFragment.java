@@ -16,7 +16,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
     private void setPreferenceSummary(Preference preference, Object value) {
         String stringValue = value.toString();
-        String key = preference.getKey();
 
         if (preference instanceof ListPreference) {
             /* For list preferences, look up the correct display value in */
