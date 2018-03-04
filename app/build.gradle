@@ -1,13 +1,5 @@
 apply plugin: 'com.android.application'
 
-Properties props = new Properties()
-File propsFile = file('../gradle.properties')
-if (propsFile.exists()) {
-    props.load(propsFile.newDataInputStream())
-} else {
-    throw new GradleException("Missing gradle.properties, check the gradle.properties")
-}
-
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.3"
@@ -19,9 +11,6 @@ android {
         versionName "1.0"
     }
     buildTypes {
-        debug {
-            buildConfigField "String", "TMDB_API_KEY", "\"${props.getProperty("tmdbApiKey")}\""
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
