@@ -9,4 +9,68 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="ErrorMessage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginRight">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginLeft">@dimen/horizontal_margin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/vertical_margin</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="MovieTitle">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="OriginalTitle">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="MovieInfo" parent="OriginalTitle">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="LineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/line_height</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/vertical_margin</item>
+        <item name="android:background">@color/colorAccent</item>
+    </style>
+
+    <style name="PlotStyle">
+        <item name="android:layout_marginLeft">@dimen/vertical_margin</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="RatingStar">
+        <item name="android:layout_width">@dimen/rating_star</item>
+        <item name="android:layout_height">@dimen/rating_star</item>
+    </style>
+
+    <style name="TmdbRating">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Rating">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?actionBarSize</item>
+        <item name="android:theme">?actionBarStyle</item>
+    </style>
+
 </resources>
