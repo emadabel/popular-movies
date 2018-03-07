@@ -1,6 +1,5 @@
 package com.emadabel.popularmovies;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -10,8 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.emadabel.popularmovies.databinding.ActivityDetailsBinding;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.emadabel.popularmovies.utils.TmdbJsonUtils;
@@ -19,20 +21,44 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailsActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Movie> {
 
     public static final String EXTRA_MOVIE_ID = "extra_id";
     private static final int DETAILS_LOADER_ID = 120;
-    private ActivityDetailsBinding mDetailBinding;
+
+    @BindView(R.id.details_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.loading_details_pb)
+    ProgressBar loadingDetailsPb;
+    @BindView(R.id.details_container)
+    ViewGroup detailsContainer;
+    @BindView(R.id.movie_title_tv)
+    TextView movieTitleTv;
+    @BindView(R.id.original_title_tv)
+    TextView originalTitleTv;
+    @BindView(R.id.movie_info_tv)
+    TextView movieInfoTv;
+    @BindView(R.id.movie_pic_iv)
+    ImageView moviePicIv;
+    @BindView(R.id.plot_tv)
+    TextView plotTv;
+    @BindView(R.id.tmdb_rating_tv)
+    TextView tmdbRatingTv;
+    @BindView(R.id.tmdb_votes_tv)
+    TextView tmdbVotesTv;
+    @BindView(R.id.error_details_tv)
+    TextView errorDetailsTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_details);
+        ButterKnife.bind(this);
 
-        mDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_details);
-
-        Toolbar toolbar = mDetailBinding.detailsToolbar;
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -92,8 +118,8 @@ public class DetailsActivity extends AppCompatActivity implements
                 if (movie != null) {
                     deliverResult(movie);
                 } else {
-                    mDetailBinding.loadingDetailsPb.setVisibility(View.VISIBLE);
-                    mDetailBinding.detailsContainer.setVisibility(View.INVISIBLE);
+                    loadingDetailsPb.setVisibility(View.VISIBLE);
+                    detailsContainer.setVisibility(View.INVISIBLE);
                     forceLoad();
                 }
             }
@@ -135,7 +161,7 @@ public class DetailsActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
-        mDetailBinding.loadingDetailsPb.setVisibility(View.INVISIBLE);
+        loadingDetailsPb.setVisibility(View.INVISIBLE);
 
         if (data == null) {
             showErrorMessage();
@@ -146,20 +172,20 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     private void populateUI(Movie movie) {
-        mDetailBinding.movieTitleTv.setText(movie.getTitle());
-        mDetailBinding.originalTitleTv.setText(movie.getOriginalTitle());
-        mDetailBinding.movieInfoTv.setText(movie.getReleaseDate());
+        movieTitleTv.setText(movie.getTitle());
+        originalTitleTv.setText(movie.getOriginalTitle());
+        movieInfoTv.setText(movie.getReleaseDate());
 
         String posterUrl = NetworkUtils.buildPosterUrl(
                 movie.getPosterPath());
         Picasso.with(this).load(posterUrl)
                 .placeholder(R.drawable.ic_placeholder)
                 .error(R.drawable.ic_error)
-                .into(mDetailBinding.moviePicIv);
+                .into(moviePicIv);
 
-        mDetailBinding.plotTv.setText(movie.getOverview());
-        mDetailBinding.tmdbRatingTv.setText(movie.getVoteAverage());
-        mDetailBinding.tmdbVotesTv.setText(movie.getVoteCount());
+        plotTv.setText(movie.getOverview());
+        tmdbRatingTv.setText(movie.getVoteAverage());
+        tmdbVotesTv.setText(movie.getVoteCount());
 
         setTitle(movie.getTitle());
     }
@@ -170,12 +196,12 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     private void showMovieDetails() {
-        mDetailBinding.detailsContainer.setVisibility(View.VISIBLE);
-        mDetailBinding.errorDetailsTv.setVisibility(View.INVISIBLE);
+        detailsContainer.setVisibility(View.VISIBLE);
+        errorDetailsTv.setVisibility(View.INVISIBLE);
     }
 
     private void showErrorMessage() {
-        mDetailBinding.detailsContainer.setVisibility(View.INVISIBLE);
-        mDetailBinding.errorDetailsTv.setVisibility(View.VISIBLE);
+        detailsContainer.setVisibility(View.INVISIBLE);
+        errorDetailsTv.setVisibility(View.VISIBLE);
     }
 }

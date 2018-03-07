@@ -29,7 +29,7 @@ public class NetworkUtils {
     private static final String API_BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w185";
 
-    private static final String API_KEY = "API KEY GOES HERE";
+    private static final String API_KEY = BuildConfig.TMDB_API_KEY;
 
     private static final String API_KEY_PARAM = "api_key";
 
