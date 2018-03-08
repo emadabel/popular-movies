@@ -16,6 +16,8 @@
 
     <string name="desc_poster">Movie poster</string>
     <string name="desc_rating">Rating</string>
+    <string name="desc_trail_preview">Trail preview</string>
+    <string name="desc_play_button">Play trail</string>
 
     <string name="original_title_label">Original title:</string>
     <string name="votes_title">Votes</string>

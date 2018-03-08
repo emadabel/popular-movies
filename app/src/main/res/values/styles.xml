@@ -9,6 +9,10 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="AppTheme.DetailsActivity" parent="AppTheme">
+        <!-- no special theme prior Api 19 -->
+    </style>
+
     <style name="ErrorMessage">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

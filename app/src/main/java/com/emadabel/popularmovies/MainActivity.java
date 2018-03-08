@@ -47,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
         mRecyclerView = findViewById(R.id.movies_list_rv);
         mErrorMessageTv = findViewById(R.id.error_message_tv);
         mLoadingIndicatorPb = findViewById(R.id.loading_indicator_pb);

@@ -9,12 +9,11 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/main_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        style="@style/ToolbarStyle"
         android:background="?colorPrimary"
         android:elevation="?elevation"
-        android:theme="?actionBarStyle"
-        app:title="@string/app_name" />
+        app:logo="@drawable/ic_logo"
+        tools:targetApi="lollipop" />
 
     <FrameLayout
         android:id="@+id/main_container_layout"
@@ -25,28 +24,21 @@
             android:id="@+id/movies_list_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/error_message_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
+            style="@style/ErrorMessage"
             android:text="@string/error_message"
-            android:textSize="20sp"
             android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/loading_indicator_pb"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="6dp"
+            android:layout_width="@dimen/pb_width"
+            android:layout_height="@dimen/pb_height"
             android:layout_gravity="center"
-            android:layout_marginEnd="96dp"
-            android:layout_marginStart="96dp"
             android:indeterminate="true"
             android:visibility="invisible" />
     </FrameLayout>
-
 </LinearLayout>

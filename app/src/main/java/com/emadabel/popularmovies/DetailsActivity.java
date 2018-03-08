@@ -64,6 +64,7 @@ public class DetailsActivity extends AppCompatActivity implements
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         int extraMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
@@ -186,8 +187,6 @@ public class DetailsActivity extends AppCompatActivity implements
         plotTv.setText(movie.getOverview());
         tmdbRatingTv.setText(movie.getVoteAverage());
         tmdbVotesTv.setText(movie.getVoteCount());
-
-        setTitle(movie.getTitle());
     }
 
     @Override
