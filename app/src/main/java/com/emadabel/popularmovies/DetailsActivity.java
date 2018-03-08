@@ -94,7 +94,7 @@ public class DetailsActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == android.R.id.home)
-            finish();
+            onBackPressed();
         return super.onOptionsItemSelected(item);
     }
 

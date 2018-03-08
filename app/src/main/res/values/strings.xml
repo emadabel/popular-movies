@@ -3,14 +3,12 @@
     <string name="error_message">No internet connection</string>
     <string name="error_details">Something went wrong while trying to retrieve the details</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_spinner">ActionBar Spinner</string>
 
-    <string name="pref_sort_label">Sort order</string>
+    <string name="spinner_sort_label_popular">Popular movies</string>
+    <string name="spinner_sort_label_top_rated">Top rated movies</string>
+
     <string name="pref_sort_key" translatable="false">sort</string>
-
-    <string name="pref_sort_label_popular">Popular movies</string>
-    <string name="pref_sort_label_top_rated">Top rated movies</string>
-
     <string name="pref_sort_popular" translatable="false">popular</string>
     <string name="pref_sort_top_rated" translatable="false">top_rated</string>
 

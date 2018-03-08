@@ -15,7 +15,10 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.emadabel.popularmovies.model.Movie;
@@ -27,17 +30,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         LoaderCallbacks<List<Movie>>,
-        SharedPreferences.OnSharedPreferenceChangeListener,
         MoviesAdapter.MovieAdapterOnClickHandler {
 
     private static final int TMDB_LOADER_ID = 110;
-
-    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageTv;
     private ProgressBar mLoadingIndicatorPb;
     private MoviesAdapter moviesAdapter;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,29 +65,69 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(moviesAdapter);
 
         getSupportLoaderManager().initLoader(TMDB_LOADER_ID, null, this);
-
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(this);
     }
 
+    /**
+     * @param menu The options menu in which you place your items
+     * @return reference: https://stackoverflow.com/questions/37250397/how-to-add-a-spinner-next-to-a-menu-in-the-toolbar
+     * reference: https://developer.android.com/guide/topics/ui/controls/spinner.html
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
+        MenuItem item = menu.findItem(R.id.spinner);
+        mSpinner = (Spinner) item.getActionView();
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_list_item_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mSpinner.setAdapter(adapter);
+
+        updateSpinner();
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String value = "";
+
+                if (pos == 0) {
+                    value = getString(R.string.pref_sort_popular);
+                }
+
+                if (pos == 1) {
+                    value = getString(R.string.pref_sort_top_rated);
+                }
+
+                SharedPreferences prefs = PreferenceManager
+                        .getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(getString(R.string.pref_sort_key), value);
+                editor.apply();
+                getSupportLoaderManager().restartLoader(TMDB_LOADER_ID, null, MainActivity.this);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    private void updateSpinner() {
+        if (mSpinner != null) {
+            String sortType = getSortType();
 
-        if (id == R.id.action_settings) {
-            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingsActivity);
-            return true;
+            if (sortType.equals(getString(R.string.pref_sort_popular))) {
+                mSpinner.setSelection(0);
+            }
+
+            if (sortType.equals(getString(R.string.pref_sort_top_rated))) {
+                mSpinner.setSelection(1);
+            }
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -159,24 +200,6 @@ public class MainActivity extends AppCompatActivity implements
         return prefs.getString(keyForSort, defaultSortType);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        if (PREFERENCES_HAVE_BEEN_UPDATED) {
-            getSupportLoaderManager().restartLoader(TMDB_LOADER_ID, null, this);
-            PREFERENCES_HAVE_BEEN_UPDATED = false;
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
-
     private void showMoviesData() {
         mRecyclerView.setVisibility(View.VISIBLE);
         mErrorMessageTv.setVisibility(View.INVISIBLE);
@@ -185,11 +208,6 @@ public class MainActivity extends AppCompatActivity implements
     private void showErrorMessage() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageTv.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        PREFERENCES_HAVE_BEEN_UPDATED = true;
     }
 
     @Override
