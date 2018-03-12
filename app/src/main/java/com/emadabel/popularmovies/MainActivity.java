@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public List<Movie> loadInBackground() {
 
-                URL tmdbRequestUrl = NetworkUtils.buildUrl(getSortType());
+                URL tmdbRequestUrl = NetworkUtils.buildUrl(getSortType(), false);
 
                 try {
                     String jsonResponse = NetworkUtils
@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements
             showErrorMessage();
         } else {
             showMoviesData();
+            mRecyclerView.smoothScrollToPosition(0);
         }
     }
 

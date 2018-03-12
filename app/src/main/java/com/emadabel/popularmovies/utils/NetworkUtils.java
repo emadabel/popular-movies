@@ -29,9 +29,14 @@ public class NetworkUtils {
     private static final String API_BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w185";
 
+    private static final String YOUTUBE_BASE_PREVIEW = "http://img.youtube.com/vi/";
+    private static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+
     private static final String API_KEY = BuildConfig.TMDB_API_KEY;
+    private static final String API_APPEND = "videos,reviews";
 
     private static final String API_KEY_PARAM = "api_key";
+    private static final String API_APPEND_PARAM = "append_to_response";
 
     /**
      * @param context the activity that checking for connectivity
@@ -54,15 +59,23 @@ public class NetworkUtils {
      * @param request Is one of three options(movieId, popularList, topRated) that will be queried for.
      * @return The URL to use to query the movies database.
      */
-    public static URL buildUrl(String request) {
+    public static URL buildUrl(String request, boolean requestExtra) {
 
         if (TextUtils.isEmpty(request)) return null;
 
         String baseUrlBuilder = API_BASE_URL + request;
 
-        Uri builtUri = Uri.parse(baseUrlBuilder).buildUpon()
-                .appendQueryParameter(API_KEY_PARAM, API_KEY)
-                .build();
+        Uri builtUri;
+        if (requestExtra) {
+            builtUri = Uri.parse(baseUrlBuilder).buildUpon()
+                    .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                    .appendQueryParameter(API_APPEND_PARAM, API_APPEND)
+                    .build();
+        } else {
+            builtUri = Uri.parse(baseUrlBuilder).buildUpon()
+                    .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                    .build();
+        }
 
         URL url = null;
         try {
@@ -78,6 +91,16 @@ public class NetworkUtils {
         return (API_BASE_IMAGE_URL)
                 .concat(POSTER_SIZE)
                 .concat(posterPath);
+    }
+
+    public static String[] buildTrialPreviewUrl(String videoKey) {
+        String[] trail = new String[2];
+        trail[0] = (YOUTUBE_BASE_PREVIEW)
+                .concat(videoKey)
+                .concat("/0.jpg");
+        trail[1] = (YOUTUBE_BASE_URL)
+                .concat(videoKey);
+        return trail;
     }
 
     /**

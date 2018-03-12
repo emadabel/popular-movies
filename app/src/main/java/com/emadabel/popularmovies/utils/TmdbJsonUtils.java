@@ -1,6 +1,7 @@
 package com.emadabel.popularmovies.utils;
 
 import com.emadabel.popularmovies.model.Movie;
+import com.emadabel.popularmovies.model.Trial;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +55,9 @@ public class TmdbJsonUtils {
         final String TMDB_ORIGINAL_TITLE = "original_title";
         final String TMDB_OVERVIEW = "overview";
         final String TMDB_RELEASE_DATE = "release_date";
+        final String TMDB_VIDEOS = "videos";
+        final String TMDB_RESULTS = "results";
+        final String TMDB_VIDEO_KEY = "key";
 
         JSONObject movieObj = new JSONObject(movieJsonStr);
 
@@ -65,6 +69,22 @@ public class TmdbJsonUtils {
         movie.setTitle(movieObj.optString(TMDB_TITLE));
         movie.setVoteAverage(movieObj.optString(TMDB_VOTE_AVERAGE));
         movie.setVoteCount(movieObj.optString(TMDB_VOTE_COUNT));
+
+        JSONObject trialsObj = movieObj.getJSONObject(TMDB_VIDEOS);
+        JSONArray trialsArray = trialsObj.getJSONArray(TMDB_RESULTS);
+
+        List<Trial> trials = new ArrayList<>();
+        for (int i = 0; i < trialsArray.length(); i++) {
+            JSONObject trialObj = trialsArray.getJSONObject(i);
+            String videoKey = trialObj.optString(TMDB_VIDEO_KEY);
+            String[] videoUrls = NetworkUtils.buildTrialPreviewUrl(videoKey);
+            Trial trial = new Trial();
+            trial.setTrialImage(videoUrls[0]);
+            trial.setTrialUrl(videoUrls[1]);
+            trials.add(trial);
+        }
+
+        movie.setTrials(trials);
 
         return movie;
     }

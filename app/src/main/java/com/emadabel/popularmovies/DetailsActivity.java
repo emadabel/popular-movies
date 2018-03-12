@@ -1,10 +1,14 @@
 package com.emadabel.popularmovies;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -25,11 +29,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailsActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Movie> {
+        LoaderManager.LoaderCallbacks<Movie>,
+        TrailsAdapter.TrailsAdapterOnClickHandler {
 
     public static final String EXTRA_MOVIE_ID = "extra_id";
     private static final int DETAILS_LOADER_ID = 120;
-
     @BindView(R.id.details_toolbar)
     Toolbar toolbar;
     @BindView(R.id.loading_details_pb)
@@ -52,6 +56,9 @@ public class DetailsActivity extends AppCompatActivity implements
     TextView tmdbVotesTv;
     @BindView(R.id.error_details_tv)
     TextView errorDetailsTv;
+    @BindView(R.id.trails_list_rv)
+    RecyclerView trailsListRv;
+    private TrailsAdapter trailsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,14 @@ public class DetailsActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+
+        trailsAdapter = new TrailsAdapter(this, this);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        trailsListRv.setLayoutManager(layoutManager);
+        trailsListRv.setHasFixedSize(true);
+        trailsListRv.setAdapter(trailsAdapter);
 
         int extraMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
 
@@ -134,7 +149,7 @@ public class DetailsActivity extends AppCompatActivity implements
                     return null;
                 }
 
-                URL tmdbRequestUrl = NetworkUtils.buildUrl(Integer.toString(query));
+                URL tmdbRequestUrl = NetworkUtils.buildUrl(Integer.toString(query), true);
 
                 try {
                     String jsonResponse = NetworkUtils
@@ -187,6 +202,13 @@ public class DetailsActivity extends AppCompatActivity implements
         plotTv.setText(movie.getOverview());
         tmdbRatingTv.setText(movie.getVoteAverage());
         tmdbVotesTv.setText(movie.getVoteCount());
+
+        if (movie.getTrials().size() > 0) {
+            trailsAdapter.setTrailsData(movie.getTrials());
+            trailsListRv.setVisibility(View.VISIBLE);
+        } else {
+            trailsListRv.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -202,5 +224,14 @@ public class DetailsActivity extends AppCompatActivity implements
     private void showErrorMessage() {
         detailsContainer.setVisibility(View.INVISIBLE);
         errorDetailsTv.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(String trialUrl) {
+        Uri webpage = Uri.parse(trialUrl);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
