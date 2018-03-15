@@ -1,6 +1,7 @@
 package com.emadabel.popularmovies.utils;
 
 import com.emadabel.popularmovies.model.Movie;
+import com.emadabel.popularmovies.model.Review;
 import com.emadabel.popularmovies.model.Trial;
 
 import org.json.JSONArray;
@@ -56,11 +57,16 @@ public class TmdbJsonUtils {
         final String TMDB_OVERVIEW = "overview";
         final String TMDB_RELEASE_DATE = "release_date";
         final String TMDB_VIDEOS = "videos";
+        final String TMDB_REVIEWS = "reviews";
         final String TMDB_RESULTS = "results";
         final String TMDB_VIDEO_KEY = "key";
+        final String TMDB_REVIEW_AUTHOR = "author";
+        final String TMDB_REVIEW_CONTENT = "content";
+        final String TMDB_REVIEW_URL = "url";
 
         JSONObject movieObj = new JSONObject(movieJsonStr);
 
+        // parsing main movie data
         Movie movie = new Movie();
         movie.setOriginalTitle(movieObj.optString(TMDB_ORIGINAL_TITLE));
         movie.setOverview(movieObj.optString(TMDB_OVERVIEW));
@@ -70,6 +76,7 @@ public class TmdbJsonUtils {
         movie.setVoteAverage(movieObj.optString(TMDB_VOTE_AVERAGE));
         movie.setVoteCount(movieObj.optString(TMDB_VOTE_COUNT));
 
+        //parsing movie's videos/trials
         JSONObject trialsObj = movieObj.getJSONObject(TMDB_VIDEOS);
         JSONArray trialsArray = trialsObj.getJSONArray(TMDB_RESULTS);
 
@@ -85,6 +92,22 @@ public class TmdbJsonUtils {
         }
 
         movie.setTrials(trials);
+
+        //parsing movie's reviews
+        JSONObject reviewsObj = movieObj.getJSONObject(TMDB_REVIEWS);
+        JSONArray reviewsArray = reviewsObj.getJSONArray(TMDB_RESULTS);
+
+        List<Review> reviews = new ArrayList<>();
+        for (int i = 0; i < reviewsArray.length(); i++) {
+            JSONObject reviewObj = reviewsArray.getJSONObject(i);
+            String reviewAuthor = reviewObj.optString(TMDB_REVIEW_AUTHOR);
+            String reviewContent = reviewObj.optString(TMDB_REVIEW_CONTENT);
+            String reviewUrl = reviewObj.optString(TMDB_REVIEW_URL);
+            Review review = new Review(reviewAuthor, reviewContent, reviewUrl);
+            reviews.add(review);
+        }
+
+        movie.setReviews(reviews);
 
         return movie;
     }

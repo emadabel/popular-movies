@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.emadabel.popularmovies.model.Movie;
+import com.emadabel.popularmovies.model.Review;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.emadabel.popularmovies.utils.TmdbJsonUtils;
 import com.squareup.picasso.Picasso;
@@ -29,11 +30,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailsActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Movie>,
-        TrailsAdapter.TrailsAdapterOnClickHandler {
+        LoaderManager.LoaderCallbacks<Movie> {
 
     public static final String EXTRA_MOVIE_ID = "extra_id";
     private static final int DETAILS_LOADER_ID = 120;
+
     @BindView(R.id.details_toolbar)
     Toolbar toolbar;
     @BindView(R.id.loading_details_pb)
@@ -56,9 +57,15 @@ public class DetailsActivity extends AppCompatActivity implements
     TextView tmdbVotesTv;
     @BindView(R.id.error_details_tv)
     TextView errorDetailsTv;
+    @BindView(R.id.reviews_title_tv)
+    TextView reviewsTitleTv;
     @BindView(R.id.trails_list_rv)
     RecyclerView trailsListRv;
+    @BindView(R.id.reviews_list_rv)
+    RecyclerView reviewsListRv;
+
     private TrailsAdapter trailsAdapter;
+    private ReviewsAdapter reviewsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +81,38 @@ public class DetailsActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        trailsAdapter = new TrailsAdapter(this, this);
+        trailsAdapter = new TrailsAdapter(this, new TrailsAdapter.TrailsAdapterOnClickHandler() {
+            @Override
+            public void onClick(String trialUrl) {
+                Uri webpage = Uri.parse(trialUrl);
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
+        });
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager trialsLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
-        trailsListRv.setLayoutManager(layoutManager);
+        trailsListRv.setLayoutManager(trialsLayoutManager);
         trailsListRv.setHasFixedSize(true);
         trailsListRv.setAdapter(trailsAdapter);
+
+        reviewsAdapter = new ReviewsAdapter(new ReviewsAdapter.ReviewsAdapterOnClickHandler() {
+            @Override
+            public void onClick(Review review) {
+                Intent intent = new Intent(DetailsActivity.this, ReviewActivity.class);
+                intent.putExtra(ReviewActivity.EXTRA_REVIEW_AUTHOR, review.getReviewAuthor());
+                intent.putExtra(ReviewActivity.EXTRA_REVIEW_CONTENT, review.getReviewContent());
+                startActivity(intent);
+            }
+        });
+
+        LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        reviewsListRv.setLayoutManager(reviewsLayoutManager);
+        reviewsListRv.setHasFixedSize(true);
+        reviewsListRv.setAdapter(reviewsAdapter);
 
         int extraMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
 
@@ -209,6 +241,16 @@ public class DetailsActivity extends AppCompatActivity implements
         } else {
             trailsListRv.setVisibility(View.GONE);
         }
+
+        if (movie.getReviews().size() > 0) {
+            reviewsAdapter.setReviewsData(movie.getReviews());
+            reviewsListRv.setVisibility(View.VISIBLE);
+            reviewsTitleTv.setVisibility(View.VISIBLE);
+
+        } else {
+            reviewsListRv.setVisibility(View.GONE);
+            reviewsTitleTv.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -224,14 +266,5 @@ public class DetailsActivity extends AppCompatActivity implements
     private void showErrorMessage() {
         detailsContainer.setVisibility(View.INVISIBLE);
         errorDetailsTv.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onClick(String trialUrl) {
-        Uri webpage = Uri.parse(trialUrl);
-        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
     }
 }

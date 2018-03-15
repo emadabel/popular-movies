@@ -192,6 +192,22 @@
                     app:layout_constraintStart_toStartOf="@+id/votes_tv"
                     tools:text="15,972" />
             </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/reviews_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/vertical_margin"
+                android:text="@string/reviews_label"
+                android:textAllCaps="true" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reviews_list_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/horizontal_margin"
+                android:layout_marginRight="@dimen/horizontal_margin" />
         </LinearLayout>
     </ScrollView>
 

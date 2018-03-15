@@ -17,9 +17,10 @@ public class Movie {
     private String overview;
     private String releaseDate;
     private List<Trial> trials;
+    private List<Review> reviews;
 
     public Movie(String voteCount, int id, String voteAverage, String title, String posterPath,
-                 String originalTitle, String overview, String releaseDate, List<Trial> trials) {
+                 String originalTitle, String overview, String releaseDate, List<Trial> trials, List<Review> reviews) {
         this.voteCount = voteCount;
         this.id = id;
         this.voteAverage = voteAverage;
@@ -29,6 +30,7 @@ public class Movie {
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.trials = trials;
+        this.reviews = reviews;
     }
 
     /**
@@ -107,5 +109,13 @@ public class Movie {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

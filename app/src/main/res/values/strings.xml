@@ -20,6 +20,7 @@
     <string name="original_title_label">Original title:</string>
     <string name="votes_title">Votes</string>
     <string name="rating_of_ten">/10</string>
+    <string name="reviews_label">Review highlights</string>
 
     <string name="dummy_text">$$$$$$$$$$$$$$$$</string>
 </resources>

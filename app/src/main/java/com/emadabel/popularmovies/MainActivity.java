@@ -28,15 +28,22 @@ import com.emadabel.popularmovies.utils.TmdbJsonUtils;
 import java.net.URL;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements
         LoaderCallbacks<List<Movie>>,
         MoviesAdapter.MovieAdapterOnClickHandler {
 
     private static final int TMDB_LOADER_ID = 110;
 
-    private RecyclerView mRecyclerView;
-    private TextView mErrorMessageTv;
-    private ProgressBar mLoadingIndicatorPb;
+    @BindView(R.id.movies_list_rv)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.error_message_tv)
+    TextView mErrorMessageTv;
+    @BindView(R.id.loading_indicator_pb)
+    ProgressBar mLoadingIndicatorPb;
+
     private MoviesAdapter moviesAdapter;
     private Spinner mSpinner;
 
@@ -44,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -51,10 +59,6 @@ public class MainActivity extends AppCompatActivity implements
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-
-        mRecyclerView = findViewById(R.id.movies_list_rv);
-        mErrorMessageTv = findViewById(R.id.error_message_tv);
-        mLoadingIndicatorPb = findViewById(R.id.loading_indicator_pb);
 
         moviesAdapter = new MoviesAdapter(this, this);
 
