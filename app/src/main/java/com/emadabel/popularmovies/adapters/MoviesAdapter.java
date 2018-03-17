@@ -1,4 +1,4 @@
-package com.emadabel.popularmovies;
+package com.emadabel.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.emadabel.popularmovies.R;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -20,8 +21,8 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     private final MovieAdapterOnClickHandler mClickHandler;
-    private List<Movie> mMovieList;
     private final Context mContext;
+    private List<Movie> mMovieList;
 
     public MoviesAdapter(Context context, MovieAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
@@ -53,6 +54,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return mMovieList.size();
     }
 
+    public void setMoviesData(List<Movie> movieList) {
+        mMovieList = movieList;
+        notifyDataSetChanged();
+    }
+
     public interface MovieAdapterOnClickHandler {
         void onClick(int movieId);
     }
@@ -74,10 +80,5 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             int movieId = mMovieList.get(adapterPosition).getId();
             mClickHandler.onClick(movieId);
         }
-    }
-
-    public void setMoviesData(List<Movie> movieList) {
-        mMovieList = movieList;
-        notifyDataSetChanged();
     }
 }

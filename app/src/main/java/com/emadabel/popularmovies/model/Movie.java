@@ -8,27 +8,27 @@ import java.util.List;
 
 public class Movie {
 
-    private String voteCount;
     private int id;
-    private String voteAverage;
-    private String title;
     private String posterPath;
+    private String title;
     private String originalTitle;
-    private String overview;
     private String releaseDate;
+    private String overview;
+    private String voteAverage;
+    private String voteCount;
     private List<Trial> trials;
     private List<Review> reviews;
 
-    public Movie(String voteCount, int id, String voteAverage, String title, String posterPath,
-                 String originalTitle, String overview, String releaseDate, List<Trial> trials, List<Review> reviews) {
-        this.voteCount = voteCount;
+    public Movie(int id, String posterPath, String title, String originalTitle, String releaseDate,
+                 String overview, String voteAverage, String voteCount, List<Trial> trials, List<Review> reviews) {
         this.id = id;
-        this.voteAverage = voteAverage;
-        this.title = title;
         this.posterPath = posterPath;
+        this.title = title;
         this.originalTitle = originalTitle;
-        this.overview = overview;
         this.releaseDate = releaseDate;
+        this.overview = overview;
+        this.voteAverage = voteAverage;
+        this.voteCount = voteCount;
         this.trials = trials;
         this.reviews = reviews;
     }

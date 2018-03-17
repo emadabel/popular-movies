@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.emadabel.popularmovies.adapters.MoviesAdapter;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.emadabel.popularmovies.utils.TmdbJsonUtils;

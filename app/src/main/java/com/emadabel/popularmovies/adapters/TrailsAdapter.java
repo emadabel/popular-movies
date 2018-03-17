@@ -1,4 +1,4 @@
-package com.emadabel.popularmovies;
+package com.emadabel.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.emadabel.popularmovies.R;
 import com.emadabel.popularmovies.model.Trial;
 import com.squareup.picasso.Picasso;
 

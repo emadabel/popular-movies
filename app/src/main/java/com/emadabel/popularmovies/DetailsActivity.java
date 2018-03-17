@@ -1,5 +1,6 @@
 package com.emadabel.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.emadabel.popularmovies.adapters.ReviewsAdapter;
+import com.emadabel.popularmovies.adapters.TrailsAdapter;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.model.Review;
 import com.emadabel.popularmovies.utils.NetworkUtils;
@@ -92,12 +95,6 @@ public class DetailsActivity extends AppCompatActivity implements
             }
         });
 
-        LinearLayoutManager trialsLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
-        trailsListRv.setLayoutManager(trialsLayoutManager);
-        trailsListRv.setHasFixedSize(true);
-        trailsListRv.setAdapter(trailsAdapter);
-
         reviewsAdapter = new ReviewsAdapter(new ReviewsAdapter.ReviewsAdapterOnClickHandler() {
             @Override
             public void onClick(Review review) {
@@ -108,17 +105,21 @@ public class DetailsActivity extends AppCompatActivity implements
             }
         });
 
-        LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
-        reviewsListRv.setLayoutManager(reviewsLayoutManager);
-        reviewsListRv.setHasFixedSize(true);
-        reviewsListRv.setAdapter(reviewsAdapter);
+        IntiRecyclerViews(this, trailsListRv, LinearLayoutManager.HORIZONTAL, trailsAdapter);
+        IntiRecyclerViews(this, reviewsListRv, LinearLayoutManager.VERTICAL, reviewsAdapter);
 
         int extraMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
 
         getSupportLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
 
         loadMovieData(extraMovieId);
+    }
+
+    private void IntiRecyclerViews(Context context, RecyclerView recyclerView, int orientation, RecyclerView.Adapter adapter) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, orientation, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
     }
 
     private void loadMovieData(int movieId) {

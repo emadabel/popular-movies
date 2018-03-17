@@ -1,4 +1,4 @@
-package com.emadabel.popularmovies;
+package com.emadabel.popularmovies.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.emadabel.popularmovies.R;
 import com.emadabel.popularmovies.model.Review;
 
 import java.util.List;
