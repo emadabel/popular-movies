@@ -49,6 +49,7 @@ public class TmdbJsonUtils {
     public static Movie getMovieDataFromJson(String movieJsonStr)
             throws JSONException {
 
+        final String TMDB_ID = "id";
         final String TMDB_VOTE_COUNT = "vote_count";
         final String TMDB_VOTE_AVERAGE = "vote_average";
         final String TMDB_TITLE = "title";
@@ -68,6 +69,7 @@ public class TmdbJsonUtils {
 
         // parsing main movie data
         Movie movie = new Movie();
+        movie.setId(movieObj.optInt(TMDB_ID));
         movie.setOriginalTitle(movieObj.optString(TMDB_ORIGINAL_TITLE));
         movie.setOverview(movieObj.optString(TMDB_OVERVIEW));
         movie.setPosterPath(movieObj.optString(TMDB_POSTER_PATH));

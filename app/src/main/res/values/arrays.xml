@@ -3,5 +3,6 @@
     <string-array name="spinner_list_item_array">
         <item>@string/spinner_sort_label_popular</item>
         <item>@string/spinner_sort_label_top_rated</item>
+        <item>@string/spinner_sort_label_favorites</item>
     </string-array>
 </resources>

@@ -221,4 +221,13 @@
             android:id="@+id/details_toolbar"
             style="@style/ToolbarStyle" />
     </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/horizontal_margin"
+        android:src="@drawable/ic_fav_on"
+        app:backgroundTint="#c75c5c" />
 </FrameLayout>

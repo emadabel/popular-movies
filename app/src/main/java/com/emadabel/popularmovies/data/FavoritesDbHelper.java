@@ -22,7 +22,7 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        final String SQL_CREATE_WEATHER_TABLE =
+        final String SQL_CREATE_FAVORITES_TABLE =
 
                 "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " (" +
 
@@ -42,9 +42,11 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
 
                         FavoritesEntry.COLUMN_VOTE_AVERAGE + " TEXT, " +
 
-                        FavoritesEntry.COLUMN_VOTE_COUNT + " TEXT" + ");";
+                        FavoritesEntry.COLUMN_VOTE_COUNT + " TEXT, " +
 
-        sqLiteDatabase.execSQL(SQL_CREATE_WEATHER_TABLE);
+                        " UNIQUE (" + FavoritesEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
+
+        sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
     }
 
     @Override

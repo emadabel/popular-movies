@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -11,20 +12,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.emadabel.popularmovies.adapters.ReviewsAdapter;
 import com.emadabel.popularmovies.adapters.TrailsAdapter;
+import com.emadabel.popularmovies.data.FavoritesContract;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.model.Review;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.emadabel.popularmovies.utils.TmdbJsonUtils;
+import com.emadabel.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -66,9 +69,14 @@ public class DetailsActivity extends AppCompatActivity implements
     RecyclerView trailsListRv;
     @BindView(R.id.reviews_list_rv)
     RecyclerView reviewsListRv;
+    @BindView(R.id.favorite_fab)
+    FloatingActionButton favoriteFab;
 
     private TrailsAdapter trailsAdapter;
     private ReviewsAdapter reviewsAdapter;
+
+    boolean isFavoriteMovie;
+    Movie movie = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +91,27 @@ public class DetailsActivity extends AppCompatActivity implements
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+
+        favoriteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFavoriteMovie) {
+                    int row = getContentResolver().delete(FavoritesContract.FavoritesEntry.buildFavoritesUriWithMovieId(movie.getId()), null, null);
+                    if (row > 0) {
+                        isFavoriteMovie = false;
+                        favoriteFab.setImageResource(R.drawable.ic_fav_off);
+                        Toast.makeText(getBaseContext(), "Successfully removed the movie from favorites list", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, Utils.movieToContentValues(movie));
+                    if (uri != null) {
+                        isFavoriteMovie = true;
+                        favoriteFab.setImageResource(R.drawable.ic_fav_on);
+                        Toast.makeText(getBaseContext(), "Successfully added new favorite movie", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
 
         trailsAdapter = new TrailsAdapter(this, new TrailsAdapter.TrailsAdapterOnClickHandler() {
             @Override
@@ -109,6 +138,14 @@ public class DetailsActivity extends AppCompatActivity implements
         IntiRecyclerViews(this, reviewsListRv, LinearLayoutManager.VERTICAL, reviewsAdapter);
 
         int extraMovieId = getIntent().getIntExtra(EXTRA_MOVIE_ID, 0);
+
+        isFavoriteMovie = Utils.movieIsFavorite(this, extraMovieId);
+
+        if (isFavoriteMovie) {
+            favoriteFab.setImageResource(R.drawable.ic_fav_on);
+        } else {
+            favoriteFab.setImageResource(R.drawable.ic_fav_off);
+        }
 
         getSupportLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
 
@@ -153,14 +190,12 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Movie> onCreateLoader(int id, final Bundle args) {
+    public Loader<Movie> onCreateLoader(int loaderId, final Bundle loaderArgs) {
         return new AsyncTaskLoader<Movie>(this) {
-
-            Movie movie = null;
 
             @Override
             protected void onStartLoading() {
-                if (args == null) {
+                if (loaderArgs == null) {
                     return;
                 }
 
@@ -169,6 +204,7 @@ public class DetailsActivity extends AppCompatActivity implements
                 } else {
                     loadingDetailsPb.setVisibility(View.VISIBLE);
                     detailsContainer.setVisibility(View.INVISIBLE);
+                    favoriteFab.setVisibility(View.INVISIBLE);
                     forceLoad();
                 }
             }
@@ -176,7 +212,7 @@ public class DetailsActivity extends AppCompatActivity implements
             @Override
             public Movie loadInBackground() {
 
-                int query = args.getInt(EXTRA_MOVIE_ID);
+                int query = loaderArgs.getInt(EXTRA_MOVIE_ID);
 
                 if (query == 0) {
                     return null;
@@ -188,9 +224,11 @@ public class DetailsActivity extends AppCompatActivity implements
                     String jsonResponse = NetworkUtils
                             .getResponseFromHttpUrl(DetailsActivity.this, tmdbRequestUrl);
 
-                    if (TextUtils.isEmpty(jsonResponse)) {
-                        return null;
-                    }
+                    /*if (jsonResponse == null) {
+                        Cursor cursor = getContentResolver().query(
+                                FavoritesContract.FavoritesEntry.buildFavoritesUriWithMovieId(query),
+                                null, null, null, null);
+                    }*/
 
                     return TmdbJsonUtils
                             .getMovieDataFromJson(jsonResponse);
@@ -261,11 +299,13 @@ public class DetailsActivity extends AppCompatActivity implements
 
     private void showMovieDetails() {
         detailsContainer.setVisibility(View.VISIBLE);
+        favoriteFab.setVisibility(View.VISIBLE);
         errorDetailsTv.setVisibility(View.INVISIBLE);
     }
 
     private void showErrorMessage() {
         detailsContainer.setVisibility(View.INVISIBLE);
+        favoriteFab.setVisibility(View.INVISIBLE);
         errorDetailsTv.setVisibility(View.VISIBLE);
     }
 }

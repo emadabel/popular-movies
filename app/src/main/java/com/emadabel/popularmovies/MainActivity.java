@@ -2,6 +2,8 @@ package com.emadabel.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -22,9 +24,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.emadabel.popularmovies.adapters.MoviesAdapter;
+import com.emadabel.popularmovies.data.FavoritesContract;
 import com.emadabel.popularmovies.model.Movie;
 import com.emadabel.popularmovies.utils.NetworkUtils;
 import com.emadabel.popularmovies.utils.TmdbJsonUtils;
+import com.emadabel.popularmovies.utils.Utils;
 
 import java.net.URL;
 import java.util.List;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements
         MoviesAdapter.MovieAdapterOnClickHandler {
 
     private static final int TMDB_LOADER_ID = 110;
+    private static final int FAVORITES_LOADER_ID = 120;
 
     @BindView(R.id.movies_list_rv)
     RecyclerView mRecyclerView;
@@ -105,6 +110,12 @@ public class MainActivity extends AppCompatActivity implements
                     value = getString(R.string.pref_sort_top_rated);
                 }
 
+                if (pos == 2) {
+                    // query
+                    getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, MainActivity.this);
+                    return;
+                }
+
                 SharedPreferences prefs = PreferenceManager
                         .getDefaultSharedPreferences(MainActivity.this);
                 SharedPreferences.Editor editor = prefs.edit();
@@ -136,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<List<Movie>> onCreateLoader(int id, final Bundle loaderArgs) {
+    public Loader<List<Movie>> onCreateLoader(final int loaderId, final Bundle loaderArgs) {
         return new AsyncTaskLoader<List<Movie>>(this) {
 
             List<Movie> mMovies = null;
@@ -155,22 +166,45 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public List<Movie> loadInBackground() {
 
-                URL tmdbRequestUrl = NetworkUtils.buildUrl(getSortType(), false);
+                switch (loaderId) {
+                    case TMDB_LOADER_ID:
+                        URL tmdbRequestUrl = NetworkUtils.buildUrl(getSortType(), false);
 
-                try {
-                    String jsonResponse = NetworkUtils
-                            .getResponseFromHttpUrl(MainActivity.this, tmdbRequestUrl);
+                        try {
+                            String jsonResponse = NetworkUtils
+                                    .getResponseFromHttpUrl(MainActivity.this, tmdbRequestUrl);
 
-                    if (TextUtils.isEmpty(jsonResponse)) {
-                        return null;
-                    }
+                            if (TextUtils.isEmpty(jsonResponse)) {
+                                return null;
+                            }
 
-                    return TmdbJsonUtils
-                            .getMoviesListFromJson(jsonResponse);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+                            return TmdbJsonUtils
+                                    .getMoviesListFromJson(jsonResponse);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case FAVORITES_LOADER_ID:
+                        Uri favoritesQueryUri = FavoritesContract.FavoritesEntry.CONTENT_URI;
+
+                        Cursor cursor = getContentResolver().query(
+                                favoritesQueryUri,
+                                null,
+                                null,
+                                null,
+                                null);
+
+                        if (cursor != null) {
+                            return Utils.cursorToMovies(cursor);
+                        }
+                        break;
+
+                    default:
+                        throw new RuntimeException("Loader Not Implemented: " + loaderId);
                 }
+
+                return null;
             }
 
             @Override
