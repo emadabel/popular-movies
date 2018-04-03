@@ -31,6 +31,7 @@ import com.emadabel.popularmovies.utils.TmdbJsonUtils;
 import com.emadabel.popularmovies.utils.Utils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -43,12 +44,24 @@ public class MainActivity extends AppCompatActivity implements
     private static final int TMDB_LOADER_ID = 110;
     private static final int FAVORITES_LOADER_ID = 120;
 
+    private static final String SPINNER_STATE_KEY = "spinner_state_key";
+    private static final String MOVIES_LIST_KEY = "movies_list_key";
+
     @BindView(R.id.movies_list_rv)
+    private
     RecyclerView mRecyclerView;
     @BindView(R.id.error_message_tv)
+    private
     TextView mErrorMessageTv;
     @BindView(R.id.loading_indicator_pb)
+    private
     ProgressBar mLoadingIndicatorPb;
+
+    private GridLayoutManager layoutManager;
+
+    private int mSpinnerState = -1;
+
+    private ArrayList<Movie> moviesList;
 
     private MoviesAdapter moviesAdapter;
     private Spinner mSpinner;
@@ -68,18 +81,33 @@ public class MainActivity extends AppCompatActivity implements
 
         moviesAdapter = new MoviesAdapter(this, this);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(moviesAdapter);
 
+        if (savedInstanceState != null) {
+            moviesList = savedInstanceState.getParcelableArrayList(MOVIES_LIST_KEY);
+            mSpinnerState = savedInstanceState.getInt(SPINNER_STATE_KEY);
+        }
+
         getSupportLoaderManager().initLoader(TMDB_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (moviesList != null) {
+            outState.putParcelableArrayList(MOVIES_LIST_KEY, moviesList);
+        }
+        outState.putInt(SPINNER_STATE_KEY, mSpinnerState);
     }
 
     /**
      * @param menu The options menu in which you place your items
-     * @return reference: https://stackoverflow.com/questions/37250397/how-to-add-a-spinner-next-to-a-menu-in-the-toolbar
+     * @return boolean
+     * reference: https://stackoverflow.com/questions/37250397/how-to-add-a-spinner-next-to-a-menu-in-the-toolbar
      * reference: https://developer.android.com/guide/topics/ui/controls/spinner.html
      */
     @Override
@@ -101,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String value = "";
+
+                //Clear movies list to retrieve the new list data
+                if (pos != mSpinnerState) {
+                    moviesList = null;
+                    mSpinnerState = pos;
+                }
 
                 if (pos == 0) {
                     value = getString(R.string.pref_sort_popular);
@@ -150,12 +184,10 @@ public class MainActivity extends AppCompatActivity implements
     public Loader<List<Movie>> onCreateLoader(final int loaderId, final Bundle loaderArgs) {
         return new AsyncTaskLoader<List<Movie>>(this) {
 
-            List<Movie> mMovies = null;
-
             @Override
             protected void onStartLoading() {
-                if (mMovies != null) {
-                    deliverResult(mMovies);
+                if (moviesList != null) {
+                    deliverResult(moviesList);
                 } else {
                     mLoadingIndicatorPb.setVisibility(View.VISIBLE);
                     mRecyclerView.setVisibility(View.INVISIBLE);
@@ -209,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void deliverResult(List<Movie> data) {
-                mMovies = data;
+                moviesList = new ArrayList<>(data);
                 super.deliverResult(data);
             }
         };
@@ -223,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements
             showErrorMessage();
         } else {
             showMoviesData();
-            mRecyclerView.smoothScrollToPosition(0);
         }
     }
 

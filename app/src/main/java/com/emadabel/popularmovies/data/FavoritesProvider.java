@@ -10,10 +10,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-/**
- * Created by Emad on 17/03/2018.
- */
-
 public class FavoritesProvider extends ContentProvider {
 
     public static final int CODE_FAVORITES = 100;
@@ -77,7 +73,7 @@ public class FavoritesProvider extends ContentProvider {
             }
 
             default:
-                throw new UnsupportedOperationException("Unknow uri: " + uri);
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);

@@ -41,42 +41,59 @@ public class DetailsActivity extends AppCompatActivity implements
     public static final String EXTRA_MOVIE_ID = "extra_id";
     private static final int DETAILS_LOADER_ID = 120;
 
+    private static final String MOVIE_DATA_KEY = "movie_data_key";
+
     @BindView(R.id.details_toolbar)
+    private
     Toolbar toolbar;
     @BindView(R.id.loading_details_pb)
+    private
     ProgressBar loadingDetailsPb;
     @BindView(R.id.details_container)
+    private
     ViewGroup detailsContainer;
     @BindView(R.id.movie_title_tv)
+    private
     TextView movieTitleTv;
     @BindView(R.id.original_title_tv)
+    private
     TextView originalTitleTv;
     @BindView(R.id.movie_info_tv)
+    private
     TextView movieInfoTv;
     @BindView(R.id.movie_pic_iv)
+    private
     ImageView moviePicIv;
     @BindView(R.id.plot_tv)
+    private
     TextView plotTv;
     @BindView(R.id.tmdb_rating_tv)
+    private
     TextView tmdbRatingTv;
     @BindView(R.id.tmdb_votes_tv)
+    private
     TextView tmdbVotesTv;
     @BindView(R.id.error_details_tv)
+    private
     TextView errorDetailsTv;
     @BindView(R.id.reviews_title_tv)
+    private
     TextView reviewsTitleTv;
     @BindView(R.id.trails_list_rv)
+    private
     RecyclerView trailsListRv;
     @BindView(R.id.reviews_list_rv)
+    private
     RecyclerView reviewsListRv;
     @BindView(R.id.favorite_fab)
+    private
     FloatingActionButton favoriteFab;
 
     private TrailsAdapter trailsAdapter;
     private ReviewsAdapter reviewsAdapter;
 
-    boolean isFavoriteMovie;
-    Movie movie = null;
+    private boolean isFavoriteMovie;
+    private Movie movie = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,14 +117,14 @@ public class DetailsActivity extends AppCompatActivity implements
                     if (row > 0) {
                         isFavoriteMovie = false;
                         favoriteFab.setImageResource(R.drawable.ic_fav_off);
-                        Toast.makeText(getBaseContext(), "Successfully removed the movie from favorites list", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), getString(R.string.toast_favorite_delete_message), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, Utils.movieToContentValues(movie));
                     if (uri != null) {
                         isFavoriteMovie = true;
                         favoriteFab.setImageResource(R.drawable.ic_fav_on);
-                        Toast.makeText(getBaseContext(), "Successfully added new favorite movie", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), getString(R.string.toast_favorite_insert_message), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -147,9 +164,21 @@ public class DetailsActivity extends AppCompatActivity implements
             favoriteFab.setImageResource(R.drawable.ic_fav_off);
         }
 
-        getSupportLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
+        //getSupportLoaderManager().initLoader(DETAILS_LOADER_ID, null, this);
+
+        if (savedInstanceState != null) {
+            movie = savedInstanceState.getParcelable(MOVIE_DATA_KEY);
+        }
 
         loadMovieData(extraMovieId);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (movie != null) {
+            outState.putParcelable(MOVIE_DATA_KEY, movie);
+        }
     }
 
     private void IntiRecyclerViews(Context context, RecyclerView recyclerView, int orientation, RecyclerView.Adapter adapter) {

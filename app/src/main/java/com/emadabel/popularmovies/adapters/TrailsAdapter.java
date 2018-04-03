@@ -13,10 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by lenovo on 11/03/2018.
- */
-
 public class TrailsAdapter extends RecyclerView.Adapter<TrailsAdapter.TrailsViewHolder> {
 
     private final TrailsAdapterOnClickHandler mClickHandler;

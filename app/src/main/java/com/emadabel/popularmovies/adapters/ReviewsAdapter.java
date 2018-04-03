@@ -11,10 +11,6 @@ import com.emadabel.popularmovies.model.Review;
 
 import java.util.List;
 
-/**
- * Created by lenovo on 13/03/2018.
- */
-
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder> {
 
     private final ReviewsAdapterOnClickHandler mClickHandler;

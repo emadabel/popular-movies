@@ -1,11 +1,20 @@
 package com.emadabel.popularmovies.model;
 
-/**
- * Created by lenovo on 12/03/2018.
- */
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Trial {
+public class Trial implements Parcelable {
 
+    public static final Parcelable.Creator<Trial> CREATOR
+            = new Parcelable.Creator<Trial>() {
+        public Trial createFromParcel(Parcel in) {
+            return new Trial(in);
+        }
+
+        public Trial[] newArray(int size) {
+            return new Trial[size];
+        }
+    };
     private String trialImage;
     private String trialUrl;
 
@@ -16,6 +25,14 @@ public class Trial {
 
     public Trial() {
 
+    }
+
+    /**
+     * recreate object from parcel
+     */
+    private Trial(Parcel in) {
+        trialImage = in.readString();
+        trialUrl = in.readString();
     }
 
     public String getTrialImage() {
@@ -32,5 +49,16 @@ public class Trial {
 
     public void setTrialUrl(String trialUrl) {
         this.trialUrl = trialUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(trialImage);
+        parcel.writeString(trialUrl);
     }
 }

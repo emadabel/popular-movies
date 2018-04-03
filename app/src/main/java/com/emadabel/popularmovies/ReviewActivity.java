@@ -15,10 +15,13 @@ public class ReviewActivity extends AppCompatActivity {
     public static final String EXTRA_REVIEW_CONTENT = "extra_content";
 
     @BindView(R.id.activity_review_author_tv)
+    private
     TextView reviewAuthorTv;
     @BindView(R.id.activity_review_content_tv)
+    private
     TextView reviewContentTv;
     @BindView(R.id.review_toolbar)
+    private
     Toolbar toolbar;
 
     @Override

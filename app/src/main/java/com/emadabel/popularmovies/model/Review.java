@@ -1,11 +1,20 @@
 package com.emadabel.popularmovies.model;
 
-/**
- * Created by lenovo on 13/03/2018.
- */
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Review {
+public class Review implements Parcelable {
 
+    public static final Parcelable.Creator<Review> CREATOR
+            = new Parcelable.Creator<Review>() {
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
+        }
+
+        public Review[] newArray(int size) {
+            return new Review[size];
+        }
+    };
     private String reviewAuthor;
     private String reviewContent;
     private String reviewUrl;
@@ -17,6 +26,15 @@ public class Review {
         this.reviewAuthor = reviewAuthor;
         this.reviewContent = reviewContent;
         this.reviewUrl = reviewUrl;
+    }
+
+    /**
+     * recreate object from parcel
+     */
+    private Review(Parcel in) {
+        reviewAuthor = in.readString();
+        reviewContent = in.readString();
+        reviewUrl = in.readString();
     }
 
     public String getReviewAuthor() {
@@ -41,5 +59,17 @@ public class Review {
 
     public void setReviewUrl(String reviewUrl) {
         this.reviewUrl = reviewUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(reviewAuthor);
+        parcel.writeString(reviewContent);
+        parcel.writeString(reviewUrl);
     }
 }

@@ -3,10 +3,6 @@ package com.emadabel.popularmovies.data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-/**
- * Created by lenovo on 15/03/2018.
- */
-
 public class FavoritesContract {
 
     public static final String CONTENT_AUTHORITY = "com.emadabel.popularmovies";

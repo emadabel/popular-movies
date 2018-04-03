@@ -1,13 +1,22 @@
 package com.emadabel.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-/**
- * Created by Emad on 24/02/2018.
- */
+public class Movie implements Parcelable {
 
-public class Movie {
+    public static final Parcelable.Creator<Movie> CREATOR
+            = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
 
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
     private int id;
     private String posterPath;
     private String title;
@@ -37,6 +46,20 @@ public class Movie {
      * No args constructor for use in serialization
      */
     public Movie() {
+    }
+
+    /**
+     * recreate object from parcel
+     */
+    private Movie(Parcel in) {
+        id = in.readInt();
+        posterPath = in.readString();
+        title = in.readString();
+        originalTitle = in.readString();
+        releaseDate = in.readString();
+        overview = in.readString();
+        voteAverage = in.readString();
+        voteCount = in.readString();
     }
 
     public List<Trial> getTrials() {
@@ -117,5 +140,24 @@ public class Movie {
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(posterPath);
+        parcel.writeString(title);
+        parcel.writeString(originalTitle);
+        parcel.writeString(releaseDate);
+        parcel.writeString(overview);
+        parcel.writeString(voteAverage);
+        parcel.writeString(voteCount);
+        parcel.writeTypedList(trials);
+        parcel.writeTypedList(reviews);
     }
 }

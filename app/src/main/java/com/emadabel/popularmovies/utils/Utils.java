@@ -12,10 +12,6 @@ import java.util.List;
 import static com.emadabel.popularmovies.data.FavoritesContract.FavoritesEntry;
 import static com.emadabel.popularmovies.data.FavoritesContract.FavoritesEntry.buildFavoritesUriWithMovieId;
 
-/**
- * Created by Emad on 30/03/2018.
- */
-
 public class Utils {
 
     public static boolean movieIsFavorite(Context context, int movieId) {

@@ -15,10 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-/**
- * Created by Emad on 23/02/2018.
- */
-
 public class NetworkUtils {
 
     private static final String API_BASE_URL = "https://api.themoviedb.org/3/movie/";

@@ -11,10 +11,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Emad on 24/02/2018.
- */
-
 public class TmdbJsonUtils {
 
     public static List<Movie> getMoviesListFromJson(String moviesJsonStr)

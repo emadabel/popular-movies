@@ -6,10 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.emadabel.popularmovies.data.FavoritesContract.FavoritesEntry;
 
-/**
- * Created by Emad on 17/03/2018.
- */
-
 public class FavoritesDbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "favorites.db";
