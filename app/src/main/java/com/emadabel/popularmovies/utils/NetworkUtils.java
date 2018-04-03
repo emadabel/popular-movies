@@ -6,8 +6,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.emadabel.popularmovies.BuildConfig;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,7 +26,7 @@ public class NetworkUtils {
     private static final String YOUTUBE_BASE_PREVIEW = "http://img.youtube.com/vi/";
     private static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
-    private static final String API_KEY = BuildConfig.TMDB_API_KEY;
+    private static final String API_KEY = "API KEY GOES HERE";
     private static final String API_APPEND = "videos,reviews";
 
     private static final String API_KEY_PARAM = "api_key";
