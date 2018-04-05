@@ -44,49 +44,34 @@ public class DetailsActivity extends AppCompatActivity implements
     private static final String MOVIE_DATA_KEY = "movie_data_key";
 
     @BindView(R.id.details_toolbar)
-    private
     Toolbar toolbar;
     @BindView(R.id.loading_details_pb)
-    private
     ProgressBar loadingDetailsPb;
     @BindView(R.id.details_container)
-    private
     ViewGroup detailsContainer;
     @BindView(R.id.movie_title_tv)
-    private
     TextView movieTitleTv;
     @BindView(R.id.original_title_tv)
-    private
     TextView originalTitleTv;
     @BindView(R.id.movie_info_tv)
-    private
     TextView movieInfoTv;
     @BindView(R.id.movie_pic_iv)
-    private
     ImageView moviePicIv;
     @BindView(R.id.plot_tv)
-    private
     TextView plotTv;
     @BindView(R.id.tmdb_rating_tv)
-    private
     TextView tmdbRatingTv;
     @BindView(R.id.tmdb_votes_tv)
-    private
     TextView tmdbVotesTv;
     @BindView(R.id.error_details_tv)
-    private
     TextView errorDetailsTv;
     @BindView(R.id.reviews_title_tv)
-    private
     TextView reviewsTitleTv;
     @BindView(R.id.trails_list_rv)
-    private
     RecyclerView trailsListRv;
     @BindView(R.id.reviews_list_rv)
-    private
     RecyclerView reviewsListRv;
     @BindView(R.id.favorite_fab)
-    private
     FloatingActionButton favoriteFab;
 
     private TrailsAdapter trailsAdapter;

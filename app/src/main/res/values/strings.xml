@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="error_message">No internet connection</string>
+    <string name="favorites_error_message">Favorites list is empty</string>
     <string name="error_details">Something went wrong while trying to retrieve the details</string>
     <string name="toast_favorite_insert_message">Successfully added new favorite movie</string>
     <string name="toast_favorite_delete_message">Successfully removed the movie from favorites list</string>

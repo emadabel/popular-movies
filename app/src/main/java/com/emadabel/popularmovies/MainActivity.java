@@ -48,16 +48,11 @@ public class MainActivity extends AppCompatActivity implements
     private static final String MOVIES_LIST_KEY = "movies_list_key";
 
     @BindView(R.id.movies_list_rv)
-    private
     RecyclerView mRecyclerView;
     @BindView(R.id.error_message_tv)
-    private
     TextView mErrorMessageTv;
     @BindView(R.id.loading_indicator_pb)
-    private
     ProgressBar mLoadingIndicatorPb;
-
-    private GridLayoutManager layoutManager;
 
     private int mSpinnerState = -1;
 
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
 
         moviesAdapter = new MoviesAdapter(this, this);
 
-        layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
@@ -177,6 +172,10 @@ public class MainActivity extends AppCompatActivity implements
             if (sortType.equals(getString(R.string.pref_sort_top_rated))) {
                 mSpinner.setSelection(1);
             }
+
+            if (mSpinnerState != -1) {
+                mSpinner.setSelection(mSpinnerState);
+            }
         }
     }
 
@@ -241,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void deliverResult(List<Movie> data) {
-                moviesList = new ArrayList<>(data);
+                if (data != null) moviesList = new ArrayList<>(data);
                 super.deliverResult(data);
             }
         };
@@ -252,7 +251,9 @@ public class MainActivity extends AppCompatActivity implements
         mLoadingIndicatorPb.setVisibility(View.INVISIBLE);
         moviesAdapter.setMoviesData(data);
         if (data == null) {
-            showErrorMessage();
+            showErrorMessage(false);
+        } else if (data.size() == 0) {
+            showErrorMessage(true);
         } else {
             showMoviesData();
         }
@@ -276,7 +277,12 @@ public class MainActivity extends AppCompatActivity implements
         mErrorMessageTv.setVisibility(View.INVISIBLE);
     }
 
-    private void showErrorMessage() {
+    private void showErrorMessage(boolean isFavoriteError) {
+        if (!isFavoriteError) {
+            mErrorMessageTv.setText(R.string.error_message);
+        } else {
+            mErrorMessageTv.setText(R.string.favorites_error_message);
+        }
         mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageTv.setVisibility(View.VISIBLE);
     }
